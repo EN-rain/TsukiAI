@@ -1,10 +1,10 @@
-# Exporting Personal AI Overlay
+# Exporting TsukiAI Overlay
 
 Yes, the application **will run** if you export it to an EXE and move it to another machine.
 
 ### ✅ Verification Results
 I have successfully built the standalone executable for you.
-- **Location**: `PersonalAiOverlay.App\bin\Release\net8.0-windows\win-x64\publish\PersonalAiOverlay.App.exe`
+- **Location**: `TsukiAI.App\bin\Release\net8.0-windows\win-x64\publish\TsukiAI.App.exe`
 - **Size**: ~153 MB (Self-contained, includes .NET runtime)
 
 ### 📋 Requirements for Target Machine
@@ -18,7 +18,7 @@ I have successfully built the standalone executable for you.
 A: **No.** The app manages the personality ("Tsuki") internally by injecting it into the system prompt. You don't need to manually create the model on the new machine.
 
 **Q: Where are settings saved?**
-A: `%APPDATA%\PersonalAiOverlay` (created automatically).
+A: `%APPDATA%\TsukiAI` (created automatically).
 
 ### 🚀 How to Run
-Simply copy the `PersonalAiOverlay.App.exe` to any folder on the new machine and run it.
+Simply copy the `TsukiAI.App.exe` to any folder on the new machine and run it.

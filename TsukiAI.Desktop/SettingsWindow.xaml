@@ -1,0 +1,330 @@
+<Window x:Class="TsukiAI.Desktop.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Settings"
+        Width="420"
+        Height="520"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Background="#0B0C10"
+        Foreground="#EFFFFFFF"
+        FontFamily="Segoe UI">
+    <Window.Resources>
+        <!-- Force dropdown/popup surfaces to be dark in this window -->
+        <SolidColorBrush x:Key="{x:Static SystemColors.WindowBrushKey}" Color="#0B0C10"/>
+        <SolidColorBrush x:Key="{x:Static SystemColors.WindowTextBrushKey}" Color="#F2FFFFFF"/>
+        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#33FFFFFF"/>
+        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="#FFFFFFFF"/>
+
+        <Style x:Key="SettingsTextBox" TargetType="{x:Type TextBox}">
+            <Setter Property="MinHeight" Value="38"/>
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="Background" Value="#14000000"/>
+            <Setter Property="Foreground" Value="#F2FFFFFF"/>
+            <Setter Property="BorderBrush" Value="#2CFFFFFF"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CaretBrush" Value="White"/>
+        </Style>
+
+        <Style x:Key="SettingsComboBoxItem" TargetType="{x:Type ComboBoxItem}">
+            <Setter Property="Foreground" Value="#F2FFFFFF"/>
+            <Setter Property="Background" Value="#0B0C10"/>
+            <Setter Property="Padding" Value="10,6"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ComboBoxItem}">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}">
+                            <ContentPresenter />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsHighlighted" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#24FFFFFF"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#30FFFFFF"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SettingsComboBox" TargetType="{x:Type ComboBox}">
+            <Setter Property="MinHeight" Value="38"/>
+            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="Background" Value="#14000000"/>
+            <Setter Property="Foreground" Value="#F2FFFFFF"/>
+            <Setter Property="BorderBrush" Value="#2CFFFFFF"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="ItemContainerStyle" Value="{StaticResource SettingsComboBoxItem}"/>
+            <!-- Force dark popup + dark selected area (Popup doesn't inherit window resources reliably) -->
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ComboBox}">
+                        <Grid SnapsToDevicePixels="True">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="36"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Border Grid.ColumnSpan="2"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="10"/>
+
+                            <ContentPresenter Grid.Column="0"
+                                              Margin="10,0,6,0"
+                                              VerticalAlignment="Center"
+                                              HorizontalAlignment="Left"
+                                              RecognizesAccessKey="True"
+                                              Content="{TemplateBinding SelectionBoxItem}"
+                                              ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                              ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"/>
+
+                            <ToggleButton Grid.Column="1"
+                                          Focusable="False"
+                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                          Background="#00000000"
+                                          BorderThickness="0">
+                                <TextBlock Text="▾"
+                                           Foreground="#EFFFFFFF"
+                                           FontSize="14"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+                            </ToggleButton>
+
+                            <Popup x:Name="Popup"
+                                   Placement="Bottom"
+                                   IsOpen="{TemplateBinding IsDropDownOpen}"
+                                   AllowsTransparency="True"
+                                   Focusable="False"
+                                   PopupAnimation="Fade">
+                                <Border Background="#0B0C10"
+                                        BorderBrush="#2CFFFFFF"
+                                        BorderThickness="1"
+                                        CornerRadius="10"
+                                        Padding="4">
+                                    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                                  Background="#0B0C10">
+                                        <ItemsPresenter/>
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SettingsButton" TargetType="{x:Type Button}">
+            <Setter Property="MinHeight" Value="38"/>
+            <Setter Property="Padding" Value="14,0"/>
+            <Setter Property="Foreground" Value="#EFFFFFFF"/>
+            <Setter Property="Background" Value="#18FFFFFF"/>
+            <Setter Property="BorderBrush" Value="#2CFFFFFF"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="10"
+                                SnapsToDevicePixels="True">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              RecognizesAccessKey="True"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#24FFFFFF"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#30FFFFFF"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.55"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ThinScrollBar" TargetType="{x:Type ScrollBar}">
+            <Setter Property="Width" Value="6"/>
+            <Setter Property="Opacity" Value="0.7"/>
+            <Setter Property="Background" Value="#12000000"/>
+        </Style>
+    </Window.Resources>
+
+    <Border Margin="16" CornerRadius="14" Background="#AA0B0C10" BorderBrush="#33FFFFFF" BorderThickness="1" Padding="14">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" FontSize="16" FontWeight="SemiBold" Text="Settings" Margin="0,0,0,12"/>
+
+            <!-- Scrollable but no visible scrollbar -->
+            <ScrollViewer Grid.Row="1"
+                          VerticalScrollBarVisibility="Hidden"
+                          HorizontalScrollBarVisibility="Disabled"
+                          PanningMode="VerticalOnly">
+            <StackPanel>
+                <TextBlock Foreground="#B3FFFFFF" Text="Activity logging" Margin="0,0,0,6"/>
+                <CheckBox Content="Enable minute/s logging + hourly summaries"
+                          Foreground="#EFFFFFFF"
+                          Margin="0,0,0,8"
+                          IsChecked="{Binding IsActivityLoggingEnabled}"/>
+
+                <Grid Margin="0,10,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                        <TextBlock Foreground="#B3FFFFFF" Text="Sample interval (minutes)"/>
+                        <TextBox Style="{StaticResource SettingsTextBox}"
+                                 Text="{Binding SampleIntervalMinutesText, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Foreground="#B3FFFFFF" Text="Summarize interval (minutes)"/>
+                        <TextBox Style="{StaticResource SettingsTextBox}"
+                                 Text="{Binding SummarizeIntervalMinutesText, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                </Grid>
+
+                <Grid Margin="0,10,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                        <TextBlock Foreground="#B3FFFFFF" Text="Screenshot capture"/>
+                        <ComboBox Style="{StaticResource SettingsComboBox}"
+                                  SelectedIndex="{Binding CaptureModeIndex}">
+                            <ComboBoxItem Content="Full screen" Foreground="#F2FFFFFF"/>
+                            <ComboBoxItem Content="Active window only" Foreground="#F2FFFFFF"/>
+                        </ComboBox>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Foreground="#B3FFFFFF" Text="Retention (hours)"/>
+                        <TextBox Style="{StaticResource SettingsTextBox}"
+                                 Text="{Binding RetentionHoursForRawText, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                </Grid>
+
+                <TextBlock Foreground="#B3FFFFFF" Text="Ollama" Margin="0,14,0,6"/>
+                <TextBlock Foreground="#7FFFFFFF" FontSize="11" Text="Model name (example: qwen2.5:3b)" Margin="0,0,0,6"/>
+                <TextBox Style="{StaticResource SettingsTextBox}"
+                         Text="{Binding ModelName, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <CheckBox Margin="0,10,0,0"
+                          Content="Auto-start Ollama server on app launch"
+                          Foreground="#EFFFFFFF"
+                          IsChecked="{Binding AutoStartOllama}"/>
+                
+                <TextBlock Foreground="#B3FFFFFF" Text="Custom model directory (optional)" Margin="0,10,0,6"/>
+                <TextBlock Foreground="#7FFFFFFF" FontSize="11" Text="Leave empty to use default Ollama models location" Margin="0,0,0,6"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox Grid.Column="0" Style="{StaticResource SettingsTextBox}"
+                             Margin="0,0,10,0"
+                             Text="{Binding ModelDirectory, UpdateSourceTrigger=PropertyChanged}"/>
+                    <Button Grid.Column="1"
+                            x:Name="BrowseButton"
+                            Click="Browse_Click"
+                            Style="{StaticResource SettingsButton}"
+                            Padding="18,0"
+                            Content="Browse..."/>
+                </Grid>
+                <CheckBox Margin="0,6,0,0"
+                          Content="Unload model on app exit (ollama stop)"
+                          Foreground="#EFFFFFFF"
+                          IsChecked="{Binding StopOllamaOnExit}"/>
+                <CheckBox Margin="0,6,0,0"
+                          Content="Use GPU when available (uncheck to use CPU only)"
+                          Foreground="#EFFFFFFF"
+                          IsChecked="{Binding UseGpu}"/>
+
+                <TextBlock Foreground="#B3FFFFFF" Text="Proactive messages" Margin="0,18,0,6"/>
+                <CheckBox Content="Send a greeting on startup"
+                          Foreground="#EFFFFFFF"
+                          Margin="0,0,0,6"
+                          IsChecked="{Binding StartupGreetingEnabled}"/>
+                <CheckBox Content="Send a check-in if I'm idle"
+                          Foreground="#EFFFFFFF"
+                          Margin="0,0,0,8"
+                          IsChecked="{Binding ProactiveMessagesEnabled}"/>
+
+                <StackPanel Margin="0,0,0,0">
+                    <TextBlock Foreground="#B3FFFFFF" Text="Idle minutes before check-in"/>
+                    <TextBox Style="{StaticResource SettingsTextBox}"
+                             Text="{Binding ProactiveMessageAfterMinutesText, UpdateSourceTrigger=PropertyChanged}"/>
+                </StackPanel>
+
+                <TextBlock Foreground="#B3FFFFFF" Text="Chat" Margin="0,18,0,6"/>
+                <Button Click="ClearHistory_Click"
+                        Style="{StaticResource SettingsButton}"
+                        Background="#18FFFFFF"
+                        BorderBrush="#2CFFFFFF"
+                        BorderThickness="1"
+                        HorizontalAlignment="Left"
+                        Content="Clear chat history"/>
+
+                <TextBlock Foreground="#B3FFFFFF" Text="Summaries" Margin="0,18,0,6"/>
+                <TextBlock Foreground="#7FFFFFFF" FontSize="11" Text="Last 5-minute notes" Margin="0,0,0,6"/>
+                <TextBox Style="{StaticResource SettingsTextBox}"
+                         IsReadOnly="True"
+                         Height="130"
+                         TextWrapping="Wrap"
+                         VerticalScrollBarVisibility="Auto"
+                         AcceptsReturn="True"
+                         FontFamily="Segoe UI, Segoe UI Emoji, Segoe UI Symbol"
+                         Text="{Binding FiveMinuteSummariesText}">
+                    <TextBox.Resources>
+                        <Style TargetType="{x:Type ScrollBar}" BasedOn="{StaticResource ThinScrollBar}"/>
+                    </TextBox.Resources>
+                </TextBox>
+
+                <TextBlock Foreground="#7FFFFFFF" FontSize="11" Text="Hourly summaries" Margin="0,12,0,6"/>
+                <TextBox Style="{StaticResource SettingsTextBox}"
+                         IsReadOnly="True"
+                         Height="200"
+                         TextWrapping="Wrap"
+                         VerticalScrollBarVisibility="Auto"
+                         AcceptsReturn="True"
+                         FontFamily="Segoe UI, Segoe UI Emoji, Segoe UI Symbol"
+                         Text="{Binding HourlySummariesText}">
+                    <TextBox.Resources>
+                        <Style TargetType="{x:Type ScrollBar}" BasedOn="{StaticResource ThinScrollBar}"/>
+                    </TextBox.Resources>
+                </TextBox>
+            </StackPanel>
+            </ScrollViewer>
+
+            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,14,0,0">
+                <Button Width="90" Margin="0,0,10,0" Click="Cancel_Click"
+                        Style="{StaticResource SettingsButton}"
+                        Content="Cancel"/>
+                <Button Width="90" Click="Save_Click"
+                        Style="{StaticResource SettingsButton}"
+                        Background="#2A7FFF"
+                        BorderThickness="0"
+                        Content="Save"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>
+

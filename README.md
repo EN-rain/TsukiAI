@@ -1,4 +1,4 @@
-# TsukiAI (Personal AI Overlay)
+# TsukiAI (TsukiAI Overlay)
 
 A lightweight, **always-on-top AI companion** for Windows (WPF).  
 Runs locally using [Ollama](https://ollama.com/), providing an anime-style interactive assistant that watches your activity and keeps you company.
@@ -31,7 +31,7 @@ Runs locally using [Ollama](https://ollama.com/), providing an anime-style inter
 
 ### Installation & Run
 1.  Download the latest release or build from source.
-2.  Run `PersonalAiOverlay.App.exe`.
+2.  Run `TsukiAI.App.exe`.
 3.  The app will start quietly in the **System Tray**.
 4.  Press `Ctrl + Alt + Space` to see it.
 
@@ -46,7 +46,7 @@ The app injects the "Tsuki" personality automatically. However, if you want to c
 ```bash
 ollama create tsuki -f Modelfile
 ```
-Then update `settings.json` in `%APPDATA%\PersonalAiOverlay` to use `tsuki` as the model name.
+Then update `settings.json` in `%APPDATA%\TsukiAI` to use `tsuki` as the model name.
 
 ## ⌨️ Shortcuts & Commands
 
@@ -66,5 +66,5 @@ Requirements: **.NET 8 SDK**
 git clone https://github.com/EN-rain/TsukiAI.git
 
 # Run the app
-dotnet run --project PersonalAiOverlay.App
+dotnet run --project TsukiAI.App
 ```
